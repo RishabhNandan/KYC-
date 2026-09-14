@@ -165,7 +165,7 @@ export default function AdminDashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-xl">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-white">KYC Welcome Rishabh Nandan </h1>
+            <h1 className="text-2xl font-bold text-white">Welcome Rishabh Nandan </h1>
             <span className="bg-emerald-500/10 text-emerald-400 text-xs font-mono font-bold px-2.5 py-0.5 rounded-full border border-emerald-500/20">
               Admin Session Active
             </span>
