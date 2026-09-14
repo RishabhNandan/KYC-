@@ -22,10 +22,10 @@ export default function Navbar({ currentView, onViewChange, isAdminLoggedIn }: N
           <div>
             <div className="flex items-center gap-2">
               <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-blue-200 bg-clip-text text-transparent">
-                VeriTrust AI
+                VIDEO KYC
               </span>
               <span className="bg-blue-500/20 text-blue-300 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-blue-500/30">
-                KYC v2.6
+                KYC V2.6
               </span>
             </div>
             <p className="text-xs text-slate-400 hidden sm:block">Automated Identity & Biometric Verification</p>
