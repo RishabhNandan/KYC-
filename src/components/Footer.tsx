@@ -14,7 +14,9 @@ export default function Footer() {
             <span>VeriTrust Security Architecture</span>
           </div>
           <p className="text-slate-400 leading-relaxed">
-            Engineered with privacy-first standards adhering to RBI KYC Guidelines, DPDP Act 2023, and ISO/IEC 27001 data protection protocols. All biometric data and document credentials are encrypted at rest and in transit.
+            Engineered with privacy-first standards adhering to RBI KYC Guidelines,
+            DPDP Act 2023, and ISO/IEC 27001 data protection protocols. All biometric data and document 
+            credentials are encrypted at rest and in transit.
           </p>
         </div>
 
@@ -42,7 +44,7 @@ export default function Footer() {
       </div>
 
       <div className="max-w-7xl mx-auto border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p>© 2026 VeriTrust AI Systems Inc. All rights reserved. For demonstration and prototype testing.</p>
+        <p>© 2026Rishabh Nandan. All rights reserved. For demonstration and prototype testing.</p>
         <div className="flex items-center gap-4 text-slate-400">
           <span className="flex items-center gap-1"><Lock className="w-3 h-3 text-emerald-400" /> SSL Encrypted</span>
           <span>•</span>
