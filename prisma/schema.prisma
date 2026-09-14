@@ -1,0 +1,175 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  DEALER
+  ENGINEER
+  CUSTOMER
+}
+
+enum InspectionStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  APPROVED
+}
+
+enum ItemStatus {
+  PASS
+  FAIL
+  WARNING
+}
+
+enum Severity {
+  NONE
+  MINOR
+  MAJOR
+  CRITICAL
+}
+
+model User {
+  id           String             @id @default(uuid())
+  name         String
+  email        String             @unique
+  password     String
+  role         Role               @default(ENGINEER)
+  phone        String?
+  avatar       String?
+  dealerId     String?
+  dealer       Dealer?            @relation(fields: [dealerId], references: [id])
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  reports      InspectionReport[] @relation("EngineerReports")
+  auditLogs    AuditLog[]
+}
+
+model Dealer {
+  id           String             @id @default(uuid())
+  name         String
+  code         String             @unique
+  logo         String?
+  address      String
+  phone        String
+  email        String
+  status       String             @default("ACTIVE")
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  users        User[]
+  vehicles     Vehicle[]
+  reports      InspectionReport[]
+}
+
+model Customer {
+  id           String             @id @default(uuid())
+  name         String
+  email        String
+  phone        String
+  address      String?
+  city         String?
+  state        String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  vehicles     Vehicle[]
+  reports      InspectionReport[]
+}
+
+model Vehicle {
+  id              String             @id @default(uuid())
+  vin             String             @unique
+  make            String
+  model           String
+  variant         String?
+  year            Int
+  engineNumber    String
+  odometer        Int
+  batteryVoltage  Float?
+  mfgDate         String?
+  fuelType        String
+  transmission    String
+  color           String
+  regNumber       String?
+  dealerId        String?
+  dealer          Dealer?            @relation(fields: [dealerId], references: [id])
+  customerId      String?
+  customer        Customer?          @relation(fields: [customerId], references: [id])
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  reports         InspectionReport[]
+}
+
+model InspectionTemplate {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  version     String   @default("1.0")
+  isDefault   Boolean  @default(true)
+  categories  String   // JSON string storing categories and item schemas
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model InspectionReport {
+  id                 String             @id @default(uuid())
+  reportNumber       String             @unique
+  vehicleId          String
+  vehicle            Vehicle            @relation(fields: [vehicleId], references: [id])
+  engineerId         String
+  engineer           User               @relation("EngineerReports", fields: [engineerId], references: [id])
+  dealerId           String?
+  dealer             Dealer?            @relation(fields: [dealerId], references: [id])
+  customerId         String?
+  customer           Customer?          @relation(fields: [customerId], references: [id])
+  status             InspectionStatus   @default(DRAFT)
+  totalScore         Float              @default(100.0)
+  grade              String             @default("A+") // A+, A, B, C, D
+  summary            String?
+  aiRecommendations  String?            // JSON string array or markdown text
+  gpsLatitude        Float?
+  gpsLongitude       Float?
+  locationAddress    String?
+  signatureEngineer  String?            // Base64 signature image
+  signatureCustomer  String?            // Base64 signature image
+  verifiedHash       String             @unique
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  results            InspectionResult[]
+}
+
+model InspectionResult {
+  id               String           @id @default(uuid())
+  reportId         String
+  report           InspectionReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  categoryKey      String
+  categoryTitle    String
+  itemTitle        String
+  status           ItemStatus       @default(PASS)
+  severity         Severity         @default(NONE)
+  remarks          String?
+  photos           String?          // JSON array of photo objects { url, timestamp, gps }
+  videoUrl         String?
+  voiceNoteUrl     String?
+  beforeAfterPair  String?          // JSON object { beforeUrl, afterUrl, note }
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  userRole  String?
+  action    String
+  entity    String
+  entityId  String?
+  details   String?
+  ipAddress String?
+  timestamp DateTime @default(now())
+}
