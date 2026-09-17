@@ -1,117 +1,62 @@
-# KYC (Know Your Customer) Application
+# SHANTI NEURO CLINIC - Hospital Management & Recommendation Documentation System
 
-A modern Next.js-based Know Your Customer (KYC) verification and management application.
+A complete, professional, secure, web-based documentation and recommendation management system for **SHANTI NEURO CLINIC**.
 
-## Overview
+## 1. System Features
+- **Strict Compliance**: Pure manual-entry recommendation system. Zero automated or AI-assisted clinical diagnosis or modification.
+- **Role-Based Access Control**:
+  - **Super Admin**: Doctor management, Co-Admin accounts, record modification/deletion permissions, audit log viewing, hospital letterhead configuration.
+  - **Co-Admin**: Doctor search/select, patient lookup/registration, manual recommendation entry, PDF generation, history viewing.
+- **Official SHANTI NEURO CLINIC Letterhead & PDF Engine**:
+  - Live side-by-side letterhead preview.
+  - Standardized Record ID generation (`REC-2026-XXXXXX`).
+  - Download, Print, and Server/Client PDF generation suitable for A4 paper.
+  - Digital Signature integration (drawn canvas or typed signatory).
+- **Core Modules**:
+  - **Dashboard**: KPI statistics, recent records, activity feed.
+  - **Doctor Management**: Add/edit/deactivate specialists, registration numbers, departments.
+  - **Patient Management**: Patient directory & quick registration (`PAT-2026-XXXXX`).
+  - **Recommendation Form & Live Preview**: Real-time letterhead preview.
+  - **Recommendation History**: Searchable, filterable by date, doctor, or keyword.
+  - **PDF Documents Library**: Quick preview modals and PDF downloads.
+  - **Audit Logs**: Comprehensive security trail tracking logins, edits, PDF generations, deletions.
+  - **Users / Co-Admins Management**: Super Admin management of desk co-admins.
+  - **Hospital Settings**: Manage hospital contacts, license number, and letterhead disclaimers.
 
-This application provides a comprehensive KYC solution for verifying and managing customer information. It streamlines the customer onboarding process with verification checks and document management.
+## 2. Tech Stack
+- **Frontend**: React 19, Next.js App Router, Tailwind CSS v4, Lucide React
+- **Backend**: Next.js Server Handlers / REST API
+- **Database & ORM**: Prisma ORM, SQLite DB (`dev.db`)
+- **Authentication**: JWT tokens stored in HttpOnly cookies, bcryptjs password hashing
+- **PDF Generation**: HTML2Canvas + jsPDF & printable CSS media layout
 
-## Features
-
-- 👤 Customer profile management
-- ✅ Verification workflows
-- 📄 Document upload and verification
-- 🔍 KYC status tracking
-- 🚀 Fast and responsive UI built with Next.js
-
-## Tech Stack
-
-- **Frontend**: Next.js 14+, React, TypeScript
-- **Styling**: Tailwind CSS
-- **Font**: Geist font family (optimized via Next.js)
-- **Deployment**: Vercel
-
-## Getting Started
+## 3. Quick Start & Setup
 
 ### Prerequisites
+- Node.js (v18+ or v20+)
+- npm
 
-- Node.js 18+ 
-- npm, yarn, pnpm, or bun
+### Installation & Execution
 
-### Installation
-
-1. Clone the repository:
 ```bash
-git clone https://github.com/RishabhNandan/KYC-.git
-cd KYC-
-```
-
-2. Install dependencies:
-```bash
+# 1. Install dependencies
 npm install
-# or
-yarn install
-# or
-pnpm install
-# or
-bun install
-```
 
-### Development
+# 2. Push Prisma database schema
+npx prisma db push
 
-Run the development server:
+# 3. Seed database with initial hospital data & accounts
+node run-seed.js
 
-```bash
+# 4. Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+Open `http://localhost:3000` in your web browser.
 
-The page auto-updates as you edit `app/page.tsx`.
+## 4. Default Credentials
 
-## Project Structure
-
-```
-├── app/              # Next.js app directory
-├── components/       # Reusable React components
-├── public/          # Static assets
-├── styles/          # Global styles
-└── README.md        # Project documentation
-```
-
-## Building for Production
-
-```bash
-npm run build
-npm start
-```
-
-## Learn More
-
-- [Next.js Documentation](https://nextjs.org/docs) - Learn about Next.js features and API
-- [Learn Next.js](https://nextjs.org/learn) - Interactive tutorial
-- [Next.js GitHub Repository](https://github.com/vercel/next.js) - Contribute to Next.js
-
-## Deployment
-
-### Deploy on Vercel
-
-The easiest way to deploy your KYC application is using the [Vercel Platform](https://vercel.com):
-
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Vercel will automatically detect Next.js and deploy
-
-[Learn more about Next.js deployment](https://nextjs.org/docs/app/building-your-application/deploying)
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-For issues and questions, please open an issue on the GitHub repository.
-
----
-
-**Built with ❤️ using Next.js**
+| Role | Email | Password |
+| --- | --- | --- |
+| **Super Admin** | `admin@shantineuroclinic.com` | `Admin@123` |
+| **Desk Co-Admin** | `coadmin@shantineuroclinic.com` | `Coadmin@123` |

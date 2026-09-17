@@ -9,162 +9,88 @@ datasource db {
 
 enum Role {
   SUPER_ADMIN
-  ADMIN
-  DEALER
-  ENGINEER
-  CUSTOMER
+  CO_ADMIN
 }
 
-enum InspectionStatus {
-  DRAFT
-  IN_PROGRESS
-  COMPLETED
-  APPROVED
+enum UserStatus {
+  ACTIVE
+  INACTIVE
 }
 
-enum ItemStatus {
-  PASS
-  FAIL
-  WARNING
-}
-
-enum Severity {
-  NONE
-  MINOR
-  MAJOR
-  CRITICAL
+enum DoctorStatus {
+  ACTIVE
+  INACTIVE
 }
 
 model User {
-  id           String             @id @default(uuid())
-  name         String
-  email        String             @unique
-  password     String
-  role         Role               @default(ENGINEER)
-  phone        String?
-  avatar       String?
-  dealerId     String?
-  dealer       Dealer?            @relation(fields: [dealerId], references: [id])
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-  reports      InspectionReport[] @relation("EngineerReports")
-  auditLogs    AuditLog[]
+  id              String           @id @default(uuid())
+  name            String
+  email           String           @unique
+  password        String
+  role            Role             @default(CO_ADMIN)
+  status          UserStatus       @default(ACTIVE)
+  phone           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  recommendations Recommendation[]
+  auditLogs       AuditLog[]
 }
 
-model Dealer {
-  id           String             @id @default(uuid())
-  name         String
-  code         String             @unique
-  logo         String?
-  address      String
-  phone        String
-  email        String
-  status       String             @default("ACTIVE")
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-  users        User[]
-  vehicles     Vehicle[]
-  reports      InspectionReport[]
+model Doctor {
+  id              String           @id @default(uuid())
+  name            String
+  regNumber       String           @unique
+  department      String
+  designation     String
+  email           String?
+  phone           String?
+  status          DoctorStatus     @default(ACTIVE)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  recommendations Recommendation[]
 }
 
-model Customer {
-  id           String             @id @default(uuid())
-  name         String
-  email        String
-  phone        String
-  address      String?
-  city         String?
-  state        String?
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-  vehicles     Vehicle[]
-  reports      InspectionReport[]
+model Patient {
+  id              String           @id @default(uuid())
+  patientId       String           @unique
+  name            String
+  age             Int
+  gender          String
+  phone           String?
+  address         String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  recommendations Recommendation[]
 }
 
-model Vehicle {
-  id              String             @id @default(uuid())
-  vin             String             @unique
-  make            String
-  model           String
-  variant         String?
-  year            Int
-  engineNumber    String
-  odometer        Int
-  batteryVoltage  Float?
-  mfgDate         String?
-  fuelType        String
-  transmission    String
-  color           String
-  regNumber       String?
-  dealerId        String?
-  dealer          Dealer?            @relation(fields: [dealerId], references: [id])
-  customerId      String?
-  customer        Customer?          @relation(fields: [customerId], references: [id])
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
-  reports         InspectionReport[]
-}
-
-model InspectionTemplate {
-  id          String   @id @default(uuid())
-  title       String
-  description String?
-  version     String   @default("1.0")
-  isDefault   Boolean  @default(true)
-  categories  String   // JSON string storing categories and item schemas
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model InspectionReport {
-  id                 String             @id @default(uuid())
-  reportNumber       String             @unique
-  vehicleId          String
-  vehicle            Vehicle            @relation(fields: [vehicleId], references: [id])
-  engineerId         String
-  engineer           User               @relation("EngineerReports", fields: [engineerId], references: [id])
-  dealerId           String?
-  dealer             Dealer?            @relation(fields: [dealerId], references: [id])
-  customerId         String?
-  customer           Customer?          @relation(fields: [customerId], references: [id])
-  status             InspectionStatus   @default(DRAFT)
-  totalScore         Float              @default(100.0)
-  grade              String             @default("A+") // A+, A, B, C, D
-  summary            String?
-  aiRecommendations  String?            // JSON string array or markdown text
-  gpsLatitude        Float?
-  gpsLongitude       Float?
-  locationAddress    String?
-  signatureEngineer  String?            // Base64 signature image
-  signatureCustomer  String?            // Base64 signature image
-  verifiedHash       String             @unique
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
-  results            InspectionResult[]
-}
-
-model InspectionResult {
-  id               String           @id @default(uuid())
-  reportId         String
-  report           InspectionReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
-  categoryKey      String
-  categoryTitle    String
-  itemTitle        String
-  status           ItemStatus       @default(PASS)
-  severity         Severity         @default(NONE)
-  remarks          String?
-  photos           String?          // JSON array of photo objects { url, timestamp, gps }
-  videoUrl         String?
-  voiceNoteUrl     String?
-  beforeAfterPair  String?          // JSON object { beforeUrl, afterUrl, note }
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+model Recommendation {
+  id                     String   @id @default(uuid())
+  recordId               String   @unique
+  doctorId               String
+  doctor                 Doctor   @relation(fields: [doctorId], references: [id])
+  patientId              String
+  patient                Patient  @relation(fields: [patientId], references: [id])
+  createdById            String
+  createdBy              User     @relation(fields: [createdById], references: [id])
+  date                   DateTime @default(now())
+  diagnosis              String
+  recommendation         String
+  followUp               String?
+  additionalInstructions String?
+  remarks                String?
+  authorizedPerson       String
+  signatureData          String?  // Base64 signature image or drawn canvas string
+  pdfGenerated           Boolean  @default(true)
+  status                 String   @default("FINALIZED") // DRAFT or FINALIZED
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 }
 
 model AuditLog {
   id        String   @id @default(uuid())
   userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userName  String?
   userRole  String?
   action    String
   entity    String
@@ -172,4 +98,18 @@ model AuditLog {
   details   String?
   ipAddress String?
   timestamp DateTime @default(now())
+}
+
+model HospitalSettings {
+  id             String   @id @default("default")
+  hospitalName   String   @default("SHANTI NEURO CLINIC")
+  tagline        String?  @default("Advanced Neurological Care & Rehabilitation Center")
+  address        String   @default("102 Neuro Care Tower, Health Avenue, Medical District, City - 400001")
+  phone          String   @default("+91 98765 43210 / +91 022 2847 9900")
+  email          String   @default("contact@shantineuroclinic.com")
+  website        String   @default("www.shantineuroclinic.com")
+  licenseNo      String   @default("HOSP-NC-2026-8899")
+  logoUrl        String?
+  disclaimerText String?  @default("This official recommendation document is generated based solely on authorized medical personnel's manually entered clinical observations and instructions at Shanti Neuro Clinic.")
+  updatedAt      DateTime @updatedAt
 }
